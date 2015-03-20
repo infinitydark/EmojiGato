@@ -4,6 +4,7 @@
 // @description  Emojis en la fisgona
 // @author       africanvs
 // @match        https://*.meneame.net/sneak
+// @match        https://*.meneame.net/m/*/sneak
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js
 // @grant        GM_addStyle
 // ==/UserScript==
@@ -19,6 +20,11 @@ function emojisappend() {
 
 // muestra los emojis
 function EmojiToggle() {
+    if (emojisvisible == true) {
+        emojisvisible = false;
+    } else {
+        emojisvisible = true;
+    }    
     if (emojisenabled == false)
         {
             emojisenabled = true;
@@ -30,19 +36,20 @@ function EmojiToggle() {
                 var text = document.getElementById('comment-input');
                 text.value = text.value + $(event.target).attr('title');
             });
+            emojisvisible = true;
         }
     $('#EmojiList').toggle();
 } ;
 
 // añade el botón "E"
 function AddButton() {
-    var enviar = document.getElementsByClassName('button')[0];
+    var enviar = document.getElementsByClassName('button');
     offset = $('.button').offset();
     if (typeof(enviar) != 'undefined' && enviar != null) {
         var btn = document.createElement('button');
         btn.innerHTML = 'E';
         btn.type = 'button';
-        btn.setAttribute('class', 'button');
+        btn.setAttribute('class', 'btn');
         btn.onclick = function () {EmojiToggle();};
         $('#EmojiList').toggle();
         $(enviar).after(btn);
@@ -52,8 +59,14 @@ function AddButton() {
 
 // INICIO
 var emojisenabled = false;
+var emojisvisible = true;
 var offset;
 AddButton();
+$('.button').click(function (event) {
+    if (emojisvisible == true) {
+        EmojiToggle();
+    }
+});
 // FINAL
 
 // estilo del div
