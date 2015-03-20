@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         NotamEmoji
-// @version      0.2
+// @version      0.1
 // @description  Emojis en notas
 // @author       africanvs
 // @match        https://*.meneame.net/notame/*
@@ -80,7 +80,6 @@ var emojisenabled = false;
 var emojisvisible = false;
 var eenabled = false;
 var offset;
-var bTextArea;
 $('.toggler').click(function (event) {
     emojisenabled = false;
     if (document.getElementById('EmojiList') != null) {
@@ -93,6 +92,13 @@ $('.reply').click(function (event) {
         bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
     }
 });
+$('.mini-icon-text').click(function (event) {
+    if (eenabled == false) {
+        bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
+    }
+});
+
+//var bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
 // FINAL
 
 // estilo del div
