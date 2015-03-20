@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         NotamEmoji
-// @version      0.1
+// @version      0.2
 // @description  Emojis en notas
 // @author       africanvs
 // @match        https://*.meneame.net/notame/*
@@ -24,19 +24,19 @@ function EmojiToggle() {
     } else {
         emojisvisible = true;
     }
-    if (emojisenabled == false)
-        {
-            emojisenabled = true;
-            EmojisAppend();
-            $('#EmojiList').hide();
-            document.getElementById('EmojiList').style.left = (offset.left + 25) + 'px';
-            document.getElementById('EmojiList').style.visibility = 'visible';
-            $('.emoji-lazy').click(function (event) {
-                var textarea = document.getElementsByName('post')[0];
-                textarea.value = textarea.value + $(event.target).attr('title');
-            });
-            emojisvisible = true;
-        }
+    if (emojisenabled == false) {
+        emojisenabled = true;
+        EmojisAppend();
+        $('#EmojiList').hide();
+        document.getElementById('EmojiList').style.left = (offset.left + 25) + 'px';
+        document.getElementById('EmojiList').style.visibility = 'visible';
+        $('.emoji-lazy').click(function (event) {
+            var textarea = document.getElementsByName('post')[0];
+            var pos = textarea.selectionStart;
+            var text = textarea.value;
+            textarea.value = text.substring(0, pos) + $(event.target).attr('title') + text.substring(pos);
+        });
+    }
     $('#EmojiList').toggle();
 } ;
 
@@ -52,7 +52,6 @@ function AddButton() {
         btn.onclick = function () {EmojiToggle();};
         $('#EmojiList').toggle();
         $(richeditkey).before(btn);
-        $('.emoji button').click(EmojiToggle);
         eenabled = true;
     }
 }
@@ -79,26 +78,23 @@ function Check4Textarea() {
 var emojisenabled = false;
 var emojisvisible = false;
 var eenabled = false;
+var bTextArea;
 var offset;
-$('.toggler').click(function (event) {
+$('.toggler').click(function (event) { // click en nueva nota
     emojisenabled = false;
     if (document.getElementById('EmojiList') != null) {
         document.getElementById('EmojiList').style.visibility = 'hidden';
     }
     bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
 });
-$('.reply').click(function (event) {
+$('.reply').click(function (event) { // click en responder nota
     if (eenabled == false) {
         bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
     }
 });
-$('.mini-icon-text').click(function (event) {
-    if (eenabled == false) {
-        bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
-    }
+$('.mini-icon-text').click(function (event) { // click en editar nota
+    bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
 });
-
-//var bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
 // FINAL
 
 // estilo del div

@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         EmojiGato
-// @version      0.1
+// @name         ComentamEmoji
+// @version      0.2
 // @description  Emojis en comentarios
 // @author       africanvs
 // @match        https://*.meneame.net/story/*
@@ -20,18 +20,24 @@ function emojisappend() {
 
 // muestra los emojis
 function EmojiToggle() {
-    if (emojisenabled == false)
-        {
-            emojisenabled = true;
-            emojisappend();
-            $('#EmojiList').hide();
-            document.getElementById('EmojiList').style.left = (offset.left + 25) + 'px';
-            document.getElementById('EmojiList').style.visibility = 'visible';
-            $('.emoji-lazy').click(function (event) {
-                var textarea = document.getElementsByName('comment_content')[0];
-                textarea.value = textarea.value + $(event.target).attr('title');
-            });
-        }
+    if (emojisvisible == true) {
+        emojisvisible = false;
+    } else {
+        emojisvisible = true;
+    }    
+    if (emojisenabled == false) {
+        emojisenabled = true;
+        emojisappend();
+        $('#EmojiList').hide();
+        document.getElementById('EmojiList').style.left = (offset.left + 25) + 'px';
+        document.getElementById('EmojiList').style.visibility = 'visible';
+        $('.emoji-lazy').click(function (event) {
+            var textarea = document.getElementsByName('comment_content')[0];
+            var pos = textarea.selectionStart;
+            var text = textarea.value;
+            textarea.value = text.substring(0, pos) + $(event.target).attr('title') + text.substring(pos);            
+        });
+    }
     $('#EmojiList').toggle();
 } ;
 
@@ -47,14 +53,39 @@ function AddButton() {
         btn.onclick = function () {EmojiToggle();};
         $('#EmojiList').toggle();
         $(richeditkey).before(btn);
-        $('.emoji button').click(EmojiToggle);
+    }
+}
+
+// oculta los emojis al enviar el comentario
+function CheckCloseEmojis() {
+    $('.button').click(function (event) {
+        if (emojisvisible == true) {
+            EmojiToggle();
+        }
+    });
+}
+
+// comprueba si hay un textarea para añadir el botón de emojis
+function Check4Textarea() {
+    if (document.getElementsByTagName('textarea').length > 0) {
+        clearInterval(bTextArea);
+        AddButton();
+        CheckCloseEmojis();
     }
 }
 
 // INICIO
 var emojisenabled = false;
+var emojisvisible = false;
+var bTextArea;
 var offset;
 AddButton();
+$('.reply').click(function (event) { // click en responder comentario
+    bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
+});
+$('.mini-icon-text').click(function (event) { // click en editar comentario
+    bTextArea=setInterval(function (){ Check4Textarea() }, 1000);
+});
 // FINAL
 
 // estilo del div
